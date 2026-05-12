@@ -23,5 +23,7 @@
             <img src="resources/burger-menu.svg" alt="hamburger-menu" width="45" height="45">
         </div>
     </div>
+
+    <script src="scripts/script.js"></script>
 </body>
 </html>
