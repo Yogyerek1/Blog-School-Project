@@ -19,8 +19,19 @@ body {
 }
 
 .navbar-logo {
+    display: flex;
+    align-items: center;
     margin-right: auto;
     margin: 0 1rem 0 1rem;
+
+    span {
+        margin-left: 0.5rem;
+        color: dimgrey;
+    }
+}
+
+.navbar-hamburger-menu-icon {
+    display: none;
 }
 
 .navbar-buttons-container {
@@ -46,4 +57,27 @@ body {
 
 .navbar-button-selected a {
     color: #2496ED;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        width: 90vw;
+    }
+
+    .navbar-button {
+        display: none;
+    }
+
+    .navbar-user-logo {
+        display: none;
+    }
+
+    .navbar-hamburger-menu-icon {
+        display: block;
+
+        img {
+            width: 35px;
+            height: 35px;
+        }
+    }
 }
