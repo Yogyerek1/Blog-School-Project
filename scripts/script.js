@@ -1,15 +1,29 @@
 const navbarButtons = [
     {
         text: "Kezdőlap",
-        path: "/Blog-School-Project/index.php",
+        file: "home.php",
         selected: true
     },
     {
         text: "Rólunk",
-        path: "/Blog-School-Project/index.php/aboutme",
+        file: "aboutme.php",
         selected: false
     }
 ];
+
+function loadPage (pageFile) {
+    fetch(`pages/${pageFile}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Hiba a betöltéskor!");
+            return response.text();
+        })
+        .then(data => {
+            document.querySelector("#content").innerHTML = data;
+        })
+        .catch(err => {
+            document.querySelector("#content").innerHTML = "Hiba: Az oldal nem található!";
+        });
+}
 
 function changeNavBarButtonSelected (index) {
     navbarButtons.forEach(button => {
@@ -19,6 +33,8 @@ function changeNavBarButtonSelected (index) {
     navbarButtons[index].selected = true;
 
     renderNavbarButtons();
+
+    loadPage(navbarButtons[index].file);
 }
 
 function renderNavbarButtons () {
@@ -26,14 +42,16 @@ function renderNavbarButtons () {
     navbarContainer.innerHTML = "";
     
     navbarButtons.forEach((button, index) => {
-        navbarContainer.innerHTML += `
-            <div
-                class="navbar-button ${button.selected ? "navbar-button-selected" : ""}"
-                onclick="changeNavBarButtonSelected(${index})"
-            >
-            <a href="${button.path}">${button.text}</a></div>
-        `;
+        const div = document.createElement("div");
+        div.className = `navbar-button ${button.selected ? "navbar-button-selected" : ""}`;
+
+        div.innerHTML = `<a href="#" onclick="event.preventDefault();">${button.text}</a>`;
+        div.onclick = () => changeNavBarButtonSelected(index);
+
+        navbarContainer.appendChild(div);
     });
 }
 
 renderNavbarButtons();
+
+loadPage("home.php");
