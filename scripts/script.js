@@ -52,6 +52,35 @@ function renderNavbarButtons () {
     });
 }
 
-renderNavbarButtons();
+document.addEventListener("DOMContentLoaded", () => {
+    const trigger = document.querySelector("#menu-trigger");
+    const dropdown = document.querySelector("#custom-dropdown");
+    const items = document.querySelectorAll(".dropdown-item");
 
-loadPage("home.php");
+    trigger.onclick = (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("show");
+    };
+
+    items.forEach(item => {
+        item.onclick = () => {
+            const file = this.getAttribute("data-value");
+
+            items.forEach(i => i.classList.remove("selected"));
+            this.classList.add("selected");
+
+            loadPage(file);
+
+            dropdown.classList.remove("show");
+        };
+    });
+
+    window.onclick = () => {
+        dropdown.classList.remove("show");
+    };
+
+    loadPage("home.php");
+    document.querySelector('[data-value="home.php"]').classList.add("selected");
+});
+
+renderNavbarButtons();

@@ -13,14 +13,9 @@
             <span>Blog</span>
         </div>
         <div class="navbar-buttons-container">
-            <div class="navbar-button navbar-button-selected"><a href="/Blog-School-Project/index.php">Kezdőlap</a></div>
-            <div class="navbar-button"><a href="/aboutme">Rólunk</a></div>
         </div>
         <div class="navbar-logo navbar-user-logo">
             <img src="resources/user.svg" alt="user" width="45" height="45">
-        </div>
-        <div class="navbar-hamburger-menu-icon navbar-logo">
-            <img src="resources/burger-menu.svg" alt="hamburger-menu" width="45" height="45">
         </div>
     </div>
     <div id="content"></div>
