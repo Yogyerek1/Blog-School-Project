@@ -1,86 +1,65 @@
-const navbarButtons = [
-    {
-        text: "Kezdőlap",
-        file: "home.php",
-        selected: true
-    },
-    {
-        text: "Rólunk",
-        file: "aboutme.php",
-        selected: false
-    }
-];
+const routes = {
+    "home": { text: "Kezdőlap", file: "home.php", showInNavbar: true },
+    "aboutme": { text: "Rólunk", file: "aboutme.php", showInNavbar: true },
+    "login": { text: "Belépés", file: "login.php", showInNavbar: false },
+    "register": { text: "Regisztráció", file: "register.php", showInNavbar: false }
+};
 
-function loadPage (pageFile) {
-    fetch(`pages/${pageFile}`)
+function loadContent(path) {
+    const route = routes[path] || routes["home"];
+
+    fetch(`pages/${route.file}`)
         .then(response => {
-            if (!response.ok) throw new Error("Hiba a betöltéskor!");
+            if (!response.ok) throw new Error("A fájl nem található");
             return response.text();
         })
-        .then(data => {
-            document.querySelector("#content").innerHTML = data;
+        .then(html => {
+            const contentDiv = document.querySelector("#content");
+            contentDiv.innerHTML = html;
+
+            updateNavbarUI(path);
         })
         .catch(err => {
-            document.querySelector("#content").innerHTML = "Hiba: Az oldal nem található!";
+            document.querySelector("#content").innerHTML = "<h2>404 - Hiba történt</h2>";
         });
 }
 
-function changeNavBarButtonSelected (index) {
-    navbarButtons.forEach(button => {
-        button.selected = false;
-    });
-
-    navbarButtons[index].selected = true;
-
-    renderNavbarButtons();
-
-    loadPage(navbarButtons[index].file);
+function navigate(path) {
+    window.history.pushState({}, "", path);
+    loadContent(path);
 }
 
-function renderNavbarButtons () {
-    const navbarContainer = document.querySelector(".navbar-buttons-container");
-    navbarContainer.innerHTML = "";
-    
-    navbarButtons.forEach((button, index) => {
-        const div = document.createElement("div");
-        div.className = `navbar-button ${button.selected ? "navbar-button-selected" : ""}`;
+function renderNavbar() {
+    const container = document.querySelector(".navbar-buttons-container");
+    container.innerHTML = "";
 
-        div.innerHTML = `<a href="#" onclick="event.preventDefault();">${button.text}</a>`;
-        div.onclick = () => changeNavBarButtonSelected(index);
+    for (const path in routes) {
+        const route = routes[path];
 
-        navbarContainer.appendChild(div);
+        if (route.showInNavbar) {
+            const div = document.createElement("div");
+            div.className = "navbar-button";
+            div.innerHTML = `<a href="${path}" data-path="${path}" onclick="event.preventDefault(); navigate('${path}')">${route.text}</a>`;
+            container.appendChild(div);
+        }
+    }
+}
+
+function updateNavbarUI(activePath) {
+    document.querySelectorAll(".navbar-button").forEach(btn => {
+        const linkPath = btn.querySelector("a").getAttribute("data-path");
+        btn.classList.toggle("navbar-button-selected", linkPath === activePath);
     });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const trigger = document.querySelector("#menu-trigger");
-    const dropdown = document.querySelector("#custom-dropdown");
-    const items = document.querySelectorAll(".dropdown-item");
+    renderNavbar();
 
-    trigger.onclick = (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle("show");
+    window.onpopstate = () => {
+        const path = window.location.pathname.split('/').pop();
+        loadContent(path || "home");
     };
 
-    items.forEach(item => {
-        item.onclick = () => {
-            const file = this.getAttribute("data-value");
-
-            items.forEach(i => i.classList.remove("selected"));
-            this.classList.add("selected");
-
-            loadPage(file);
-
-            dropdown.classList.remove("show");
-        };
-    });
-
-    window.onclick = () => {
-        dropdown.classList.remove("show");
-    };
-
-    document.querySelector('[data-value="home.php"]').classList.add("selected");
+    const currentPath = window.location.pathname.split('/').pop();
+    loadContent(currentPath || "home");
 });
-
-loadPage("home.php");
-renderNavbarButtons();

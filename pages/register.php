@@ -55,7 +55,7 @@
         </form>
 
         <div class="register-link">
-            <a class="register-link" onclick="loadPage('login.php')">Már van fiókod?</a>
+            <a class="register-link" onclick="navigate('login')">Már van fiókod?</a>
         </div>
         <script src="scripts/script.js"></script>
     </div>
