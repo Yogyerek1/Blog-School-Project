@@ -15,7 +15,7 @@
         <div class="navbar-buttons-container">
         </div>
         <div class="navbar-logo navbar-user-logo">
-            <img src="resources/user.svg" alt="user" onclick="loadPage('login.php')" width="45" height="45">
+            <img src="resources/user.svg" alt="user" onclick="navigate('login')" width="45" height="45">
         </div>
     </div>
     <div id="content"></div>

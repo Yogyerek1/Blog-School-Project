@@ -1,3 +1,40 @@
+<?php
+    session_start();
+    require_once '../database/db-config.php';
+
+    $error_msg = "";
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $user_input = isset($_POST['username']) ? trim($_POST['username']) : '';
+        $pass_input = isset($_POST['password']) ? $_POST['password'] : '';
+
+        $sql = "SELECT ID, username, password, role FROM users WHERE username = ?";
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt) {
+            $stmt->bind_param("s", $user_input);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($row = $result->fetch_assoc()) {
+                if (password_verify($pass_input, $row['password'])) {
+                    $_SESSION['user_id'] = $row['id'];
+                    $_SESSION['username'] = $row['username'];
+                    $_SESSION['role'] = $row['role'];
+
+                    echo "<script>alert('Sikeres belépés!'); navigate('home');</script>";
+                    exit;
+                } else {
+                    $error_msg = "Hibás jelszó!";
+                }
+            } else {
+                $error_msg = "Nincs ilyen felhasználó!";
+            }
+            $stmt->close();
+        }
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +59,7 @@
         </form>
 
         <div class="register-link">
-            <a class="register-link" onclick="loadPage('register.php')">Még nincs fiókod?</a>
+            <a class="register-link" onclick="navigate('register')">Még nincs fiókod?</a>
         </div>
         <script src="scripts/script.js"></script>
     </div>

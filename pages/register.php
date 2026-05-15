@@ -19,7 +19,7 @@
                 $stmt->bind_param("ssi", $user, $hashed_password, $role);
                 try {
                     if ($stmt->execute()) {
-                        echo "<script>alert('Sikeres regisztráció!'); loadPage('login.php');</script>";
+                        echo "<script>alert('Sikeres regisztráció!'); navigate('login');</script>";
                         exit;
                     }
                 } catch (mysqli_sql_exception $e) {
