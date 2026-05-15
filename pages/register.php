@@ -1,9 +1,8 @@
 <?php
     require_once '../database/db-config.php';
 
-    $error_msg = "";
-
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $error_msg = "";
         $user = isset($_POST['username']) ? trim($_POST['username']) : '';
         $pass = isset($_POST['password']) ? $_POST['password'] : '';
         $role = 0;
@@ -19,7 +18,8 @@
                 $stmt->bind_param("ssi", $user, $hashed_password, $role);
                 try {
                     if ($stmt->execute()) {
-                        echo "<script>alert('Sikeres regisztráció!'); navigate('login');</script>";
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => true]);
                         exit;
                     }
                 } catch (mysqli_sql_exception $e) {
@@ -28,36 +28,54 @@
                 $stmt->close();
             }
         }
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => $error_msg]);
+        exit;
     }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/user.css">
-    <title>Felhasználó</title>
-</head>
-<body>
-    <div class="form">
-        <div class="logo">
-            <img src="resources/logo.svg" alt="logo" width="155" height="155">
-        </div>
-        <form action="pages/register.php" method="POST">
-            <label for="username">Felhasználónév:</label>
-            <input type="text" name="username" required><br>
+<link rel="stylesheet" href="styles/user.css">
 
-            <label for="password">Jelszó:</label>
-            <input type="password" name="password" required><br>
-
-            <input type="submit" value="Regisztráció"><br>
-        </form>
-
-        <div class="register-link">
-            <a class="register-link" onclick="navigate('login')">Már van fiókod?</a>
-        </div>
-        <script src="scripts/script.js"></script>
+<div class="form">
+    <div class="logo">
+        <img src="resources/logo.svg" alt="logo" width="155" height="155">
     </div>
-</body>
-</html>
+    <form id="register-form">
+        <label for="username">Felhasználónév:</label>
+        <input type="text" name="username" required><br>
+
+        <label for="password">Jelszó:</label>
+        <input type="password" name="password" required><br>
+
+        <div id="register-error" style="color: red; margin-bottom: 8px;"></div>
+
+        <input type="submit" value="Regisztráció"><br>
+    </form>
+
+    <div class="register-link">
+        <a class="register-link" onclick="navigate('login')">Már van fiókod?</a>
+    </div>
+</div>
+
+<script>
+document.getElementById('register-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const errorDiv = document.getElementById('register-error');
+    errorDiv.textContent = '';
+
+    try {
+        const res = await fetch('pages/register.php', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.success) {
+            alert('Sikeres regisztráció!');
+            navigate('login');
+        } else {
+            errorDiv.textContent = data.error;
+        }
+    } catch (err) {
+        errorDiv.textContent = 'Hálózati hiba történt.';
+    }
+});
+</script>

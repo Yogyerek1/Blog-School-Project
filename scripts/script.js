@@ -17,6 +17,13 @@ function loadContent(path) {
             const contentDiv = document.querySelector("#content");
             contentDiv.innerHTML = html;
 
+            contentDiv.querySelectorAll("script").forEach(oldScript => {
+                const newScript = document.createElement("script");
+                newScript.textContent = oldScript.textContent;
+                document.body.appendChild(newScript);
+                oldScript.remove();
+            });
+
             updateNavbarUI(path);
         })
         .catch(err => {
@@ -25,7 +32,7 @@ function loadContent(path) {
 }
 
 function navigate(path) {
-    window.history.pushState({}, "", path);
+    window.location.hash = path;
     loadContent(path);
 }
 
@@ -55,11 +62,11 @@ function updateNavbarUI(activePath) {
 document.addEventListener("DOMContentLoaded", () => {
     renderNavbar();
 
-    window.onpopstate = () => {
-        const path = window.location.pathname.split('/').pop();
-        loadContent(path || "home");
+    window.onhashchange = () => {
+        const path = window.location.hash.replace('#', '') || 'home';
+        loadContent(path);
     };
 
-    const currentPath = window.location.pathname.split('/').pop();
-    loadContent(currentPath || "home");
+    const path = window.location.hash.replace('#', '') || 'home';
+    loadContent(path);
 });

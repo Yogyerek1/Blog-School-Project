@@ -2,9 +2,8 @@
     session_start();
     require_once '../database/db-config.php';
 
-    $error_msg = "";
-
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $error_msg = "";
         $user_input = isset($_POST['username']) ? trim($_POST['username']) : '';
         $pass_input = isset($_POST['password']) ? $_POST['password'] : '';
 
@@ -18,11 +17,12 @@
 
             if ($row = $result->fetch_assoc()) {
                 if (password_verify($pass_input, $row['password'])) {
-                    $_SESSION['user_id'] = $row['id'];
+                    $_SESSION['user_id'] = $row['ID'];
                     $_SESSION['username'] = $row['username'];
                     $_SESSION['role'] = $row['role'];
 
-                    echo "<script>alert('Sikeres belépés!'); navigate('home');</script>";
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true]);
                     exit;
                 } else {
                     $error_msg = "Hibás jelszó!";
@@ -32,36 +32,53 @@
             }
             $stmt->close();
         }
+
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => $error_msg]);
+        exit;
     }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/user.css">
-    <title>Felhasználó</title>
-</head>
-<body>
-    <div class="form">
-        <div class="logo">
-            <img src="resources/logo.svg" alt="logo" width="155" height="155">
-        </div>
-        <form action="pages/login.php" method="POST">
-            <label for="username">Felhasználónév:</label>
-            <input type="text" name="username" required><br>
+<link rel="stylesheet" href="styles/user.css">
 
-            <label for="password">Jelszó:</label>
-            <input type="password" name="password" required><br>
-
-            <input type="submit" value="Bejelentkezés"><br>
-        </form>
-
-        <div class="register-link">
-            <a class="register-link" onclick="navigate('register')">Még nincs fiókod?</a>
-        </div>
-        <script src="scripts/script.js"></script>
+<div class="form">
+    <div class="logo">
+        <img src="resources/logo.svg" alt="logo" width="155" height="155">
     </div>
-</body>
-</html>
+    <form id="login-form">
+        <label for="username">Felhasználónév:</label>
+        <input type="text" name="username" required><br>
+
+        <label for="password">Jelszó:</label>
+        <input type="password" name="password" required><br>
+
+        <div id="login-error" style="color: red; margin-bottom: 8px;"></div>
+
+        <input type="submit" value="Bejelentkezés"><br>
+    </form>
+
+    <div class="register-link">
+        <a class="register-link" onclick="navigate('register')">Még nincs fiókod?</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const errorDiv = document.getElementById('login-error');
+        errorDiv.textContent = '';
+
+        try {
+            const res = await fetch('pages/login.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                navigate('home');
+            } else {
+                errorDiv.textContent = data.error;
+            }
+        } catch (err) {
+            errorDiv.textContent = 'Hálózati hiba történt.';
+        }
+    });
+</script>
