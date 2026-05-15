@@ -2,7 +2,8 @@ const routes = {
     "home": { text: "Kezdőlap", file: "home.php", showInNavbar: true },
     "aboutme": { text: "Rólunk", file: "aboutme.php", showInNavbar: true },
     "login": { text: "Belépés", file: "login.php", showInNavbar: false },
-    "register": { text: "Regisztráció", file: "register.php", showInNavbar: false }
+    "register": { text: "Regisztráció", file: "register.php", showInNavbar: false },
+    "user": { text: "Fiók", file: "user.php", showInNavbar: false }
 };
 
 function loadContent(path) {
