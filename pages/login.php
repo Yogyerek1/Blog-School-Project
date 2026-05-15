@@ -11,7 +11,7 @@
         <div class="logo">
             <img src="resources/logo.svg" alt="logo" width="155" height="155">
         </div>
-        <form action="login.php" method="POST">
+        <form action="pages/login.php" method="POST">
             <label for="username">Felhasználónév:</label>
             <input type="text" name="username" required><br>
 
