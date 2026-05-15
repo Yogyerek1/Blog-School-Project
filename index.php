@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="styles/style.css">
     <title>Blog</title>
 </head>
 <body>
@@ -15,7 +15,7 @@
         <div class="navbar-buttons-container">
         </div>
         <div class="navbar-logo navbar-user-logo">
-            <img src="resources/user.svg" alt="user" onclick="loadPage('user.php')" width="45" height="45">
+            <img src="resources/user.svg" alt="user" onclick="loadPage('login.php')" width="45" height="45">
         </div>
     </div>
     <div id="content"></div>

@@ -79,8 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.classList.remove("show");
     };
 
-    loadPage("home.php");
     document.querySelector('[data-value="home.php"]').classList.add("selected");
 });
 
+loadPage("home.php");
 renderNavbarButtons();
