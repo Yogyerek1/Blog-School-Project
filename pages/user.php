@@ -8,14 +8,20 @@
 <?php if (!$logged_in): ?>
     <script>navigate('login');</script>
 <?php else: ?>
-
+<header>
+    <link rel="stylesheet" href="styles/user.css">
+</header>
 <div class="form user-card">
     <div class="logo">
         <img src="resources/user.svg" alt="user" width="100" height="100">
     </div>
 
     <h2 class="user-greeting">Szia, <span class="user-name"><?= $username ?></span>!</h2>
-    <p class="user-role-label"><?= $role > 0 ? 'Adminisztrátor/Szerkesztő' : 'Felhasználó' ?></p>
+    <p class="user-role-label"><?php
+        if ($role == 0) echo 'Olvasó';
+        if ($role == 1) echo 'Szerkesztő';
+        if ($role == 2) echo 'Adminisztrátor';
+    ?></p>
 
     <div class="user-actions">
         <?php if ($role > 0): ?>
