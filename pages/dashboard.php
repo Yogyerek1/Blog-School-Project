@@ -44,13 +44,22 @@ function dashboardNavigate(panel) {
     const content = document.getElementById('dashboard-content');
 
     if (panel === 'content') {
-        content.innerHTML = '<div class="dashboard-placeholder">📝 Tartalom kezelése (hamarosan)</div>';
+        fetch('pages/dashboard_content.php')
+        .then(r => r.text())
+        .then(html => {
+            content.innerHTML = html;
+            content.querySelectorAll('script').forEach(oldScript => {
+                const newScript = document.createElement('script');
+                newScript.textContent = oldScript.textContent;
+                document.body.appendChild(newScript);
+                oldScript.remove();
+            });
+        });
     } else if (panel === 'users') {
         fetch('pages/dashboard_users.php')
             .then(r => r.text())
             .then(html => {
                 content.innerHTML = html;
-
                 content.querySelectorAll('script').forEach(oldScript => {
                     const newScript = document.createElement('script');
                     newScript.textContent = oldScript.textContent;
